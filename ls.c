@@ -9,8 +9,7 @@ main(void)
 	DIR *dir;
 	struct dirent *entry;
 
-	dir = opendir(".");
-	if (dir == NULL) {
+	if ((dir = opendir(".")) == NULL) {
 		fputs("error: opendir", stderr);
 		return 1;
 	}
@@ -25,6 +24,11 @@ main(void)
 
 	if (errno) {
 		fputs("error: readdir", stderr);
+		return 1;
+	}
+
+	if (closedir(dir)) {
+		fputs("error: closedir", stderr);
 		return 1;
 	}
 
