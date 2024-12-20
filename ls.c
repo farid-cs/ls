@@ -27,7 +27,7 @@ main(int argc, char **argv)
 			flags.A = 1;
 			break;
 		case '?':
-			fputs("usage: ls [-a] [DIR]\n", stderr);
+			fputs("usage: ls [-aA] [DIR]\n", stderr);
 			return 1;
 		}
 	}
