@@ -1,10 +1,12 @@
 #include <dirent.h>
 #include <errno.h>
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
 
 struct {
 	int a;
+	int A;
 } flags;
 
 int
@@ -16,10 +18,13 @@ main(int argc, char **argv)
 	int c;
 
 	opterr = 0;
-	while ((c = getopt(argc, argv, "a")) != -1) {
+	while ((c = getopt(argc, argv, "aA")) != -1) {
 		switch (c) {
 		case 'a':
 			flags.a = 1;
+			break;
+		case 'A':
+			flags.A = 1;
 			break;
 		case '?':
 			fputs("usage: ls [-a] [DIR]\n", stderr);
@@ -39,7 +44,10 @@ main(int argc, char **argv)
 		if ((entry = readdir(dir)) == NULL)
 			break;
 
-		if (entry->d_name[0] != '.' || flags.a)
+		/* FIXME: find a bettry way */
+		if (entry->d_name[0] != '.' || flags.a ||
+		    flags.A && strcmp(entry->d_name, ".") &&
+		    strcmp(entry->d_name, ".."))
 			puts(entry->d_name);
 	}
 
