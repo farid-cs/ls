@@ -3,13 +3,15 @@
 #include <stdio.h>
 
 int
-main(void)
+main(int argc, char **argv)
 {
-
 	DIR *dir;
 	struct dirent *entry;
+	char *filepath;
 
-	if ((dir = opendir(".")) == NULL) {
+	filepath = argc > 1 ? argv[1] : ".";
+
+	if ((dir = opendir(filepath)) == NULL) {
 		fputs("error: opendir", stderr);
 		return 1;
 	}
