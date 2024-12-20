@@ -1,6 +1,11 @@
 #include <dirent.h>
 #include <errno.h>
 #include <stdio.h>
+#include <unistd.h>
+
+struct {
+	int a;
+} flags;
 
 int
 main(int argc, char **argv)
@@ -8,8 +13,21 @@ main(int argc, char **argv)
 	DIR *dir;
 	struct dirent *entry;
 	char *filepath;
+	int c;
 
-	filepath = argc > 1 ? argv[1] : ".";
+	opterr = 0;
+	while ((c = getopt(argc, argv, "a")) != -1) {
+		switch (c) {
+		case 'a':
+			flags.a = 1;
+			break;
+		case '?':
+			fputs("usage: ls [-a] [DIR]\n", stderr);
+			return 1;
+		}
+	}
+
+	filepath = optind < argc ? argv[optind] : ".";
 
 	if ((dir = opendir(filepath)) == NULL) {
 		fputs("error: opendir", stderr);
@@ -21,7 +39,8 @@ main(int argc, char **argv)
 		if ((entry = readdir(dir)) == NULL)
 			break;
 
-		puts(entry->d_name);
+		if (entry->d_name[0] != '.' || flags.a)
+			puts(entry->d_name);
 	}
 
 	if (errno) {
