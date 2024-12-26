@@ -14,9 +14,9 @@ struct {
 static int
 should_print(const char *filename)
 {
-	return filename[0] != '.' || flags.a
-	    || flags.A && strcmp(filename, ".")
-	    && strcmp(filename, "..");
+	return filename[0] != '.'
+		|| flags.a
+		|| flags.A && strcmp(filename, ".") && strcmp(filename, "..");
 }
 
 static int
@@ -26,7 +26,7 @@ ls(const char *filepath)
 	struct dirent *entry;
 
 	if ((dir = opendir(filepath)) == NULL) {
-		fputs("error: opendir", stderr);
+		fputs("error: opendir\n", stderr);
 		return -1;
 	}
 
@@ -45,12 +45,12 @@ ls(const char *filepath)
 	}
 
 	if (errno) {
-		fputs("error: readdir", stderr);
+		fputs("error: readdir\n", stderr);
 		return -1;
 	}
 
 	if (closedir(dir)) {
-		fputs("error: closedir", stderr);
+		fputs("error: closedir\n", stderr);
 		return -1;
 	}
 
