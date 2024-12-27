@@ -4,7 +4,7 @@
 #include <string.h>
 #include <unistd.h>
 
-struct {
+static struct {
 	int a;
 	int A;
 	int i;
