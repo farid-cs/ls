@@ -76,7 +76,7 @@ main(int argc, char **argv)
 			flags.i = 1;
 			break;
 		case '?':
-			fputs("usage: ls [-aA] [DIR]\n", stderr);
+			fputs("usage: ls [-aAi] [DIR]\n", stderr);
 			return 1;
 		}
 	}

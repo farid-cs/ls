@@ -1,3 +1,4 @@
+CC = cc
 CFLAGS = -std=c99 -pedantic -Wall -Wextra
 
 all: ls
