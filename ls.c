@@ -26,6 +26,10 @@ ls(const char *filepath)
 	struct dirent *entry;
 
 	if ((dir = opendir(filepath)) == NULL) {
+		if (errno == ENOTDIR) {
+			puts(filepath);
+			return 0;
+		}
 		fputs("error: opendir\n", stderr);
 		return -1;
 	}
