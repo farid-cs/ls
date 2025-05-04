@@ -1,3 +1,5 @@
+#include <sys/stat.h>
+
 #include <dirent.h>
 #include <errno.h>
 #include <stdio.h>
@@ -19,15 +21,29 @@ should_print(const char *filename)
 		|| flags.A && strcmp(filename, ".") && strcmp(filename, "..");
 }
 
+static void
+print_file(const char *filepath)
+{
+	struct stat stats = {0};
+
+	lstat(filepath, &stats);
+
+	if (flags.i)
+		printf("%lu %s\n", stats.st_ino, filepath);
+	else
+		puts(filepath);
+}
+
 static int
 ls(const char *filepath)
 {
 	DIR *dir;
 	struct dirent *entry;
 
-	if ((dir = opendir(filepath)) == NULL) {
+	dir = opendir(filepath);
+	if (dir == NULL) {
 		if (errno == ENOTDIR) {
-			puts(filepath);
+			print_file(filepath);
 			return 0;
 		}
 		fputs("error: opendir\n", stderr);
@@ -36,7 +52,8 @@ ls(const char *filepath)
 
 	for (;;) {
 		errno = 0;
-		if ((entry = readdir(dir)) == NULL)
+		entry = readdir(dir);
+		if (entry == NULL)
 			break;
 
 		if (!should_print(entry->d_name))
@@ -68,7 +85,10 @@ main(int argc, char **argv)
 	int c;
 
 	opterr = 0;
-	while ((c = getopt(argc, argv, "aAi")) != -1) {
+	for (;;) {
+		c = getopt(argc, argv, "aAi");
+		if (c < 0)
+			break;
 		switch (c) {
 		case 'a':
 			flags.a = 1;
@@ -80,7 +100,7 @@ main(int argc, char **argv)
 			flags.i = 1;
 			break;
 		case '?':
-			fputs("usage: ls [-aAi] [DIR]\n", stderr);
+			fputs("usage: ls [-aAi] [FILE]\n", stderr);
 			return 1;
 		}
 	}
